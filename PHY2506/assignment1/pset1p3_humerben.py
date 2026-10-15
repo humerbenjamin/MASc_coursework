@@ -112,13 +112,13 @@ def gaussian_dist(x):
 # block for running functions
 ###########################################################
 if __name__ == '__main__':
-    do_a=True
-    do_c=False
+    do_a=False
+    do_c=True
     if do_a:
         make_plots(-4,4,0.1)
     if do_c:
         n = [10,100,1000,10000]
-        n_bins = [5, 10, 20, 50]
+        n_bins = [5, 10, 20, 25]
         for i in range(len(n)):
             make_uniform_dist(n[i], n_bins[i])
             make_normal_dist(n[i], n_bins[i])
