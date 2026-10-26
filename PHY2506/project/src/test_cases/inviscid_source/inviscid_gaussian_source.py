@@ -1,7 +1,7 @@
 # add the src header to pythonpath
 ############################################################
 import sys
-sys.path.append("/home/humerben/Documents/uoft_MASc/coursework/MASc_coursework/PHY2506/project")
+sys.path.append(".")
 
 
 # import standard modules
@@ -17,17 +17,23 @@ from src.viscous_burgers_solver.transient_solver import transient_solve
 
 
 
+# make source function
+def S_fcn(u, mu=10, sig=1):
+    return 1 / np.sqrt(2*np.pi*sig**2) * np.exp((-(u-mu)**2) / (2*sig**2))
+
+
 # run test case
 ############################################################
 n_points=1000
 x = np.linspace(-1,1,n_points)
 # t_array = np.linspace(0,1,1000)
 t_f = 1.6#1e-10 #1e-10
-u = np.append(1*np.ones(int(n_points/2)), -2*np.ones(int(n_points/2)))#100*sp.stats.norm.pdf(x, scale=0.25) #np.zeros(len(x))#-x**2+1
-S = np.zeros(len(x)) # sp.stats.norm.pdf(x, scale=0.25) #np.zeros(len(x)) #sp.stats.norm.pdf(x)
-BCs = [1,-2]
+# u = np.append(1*np.ones(int(n_points/2)), -1*np.ones(int(n_points/2)))#100*sp.stats.norm.pdf(x, scale=0.25) #np.zeros(len(x))#-x**2+1
+u = x.copy()
+# S = S_fcn # sp.stats.norm.pdf(x, scale=0.25) #np.zeros(len(x)) #sp.stats.norm.pdf(x)
+BCs = [0,0]
 
-df = transient_solve(u, x, t_f, S=S, kin_viscosity=0, BCs=BCs, data_save_interval=0.2)
+df = transient_solve(u, x, t_f, S_fcn, kin_viscosity=0, BCs=BCs, data_save_interval=0.2)
 
 for t in np.unique(np.array(df.t)):
     df_t = df[df.t == t]

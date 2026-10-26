@@ -1,7 +1,7 @@
 # add the src header to pythonpath
 ############################################################
 import sys
-sys.path.append("/home/humerben/Documents/uoft_MASc/coursework/MASc_coursework/PHY2506/project")
+sys.path.append(".")
 
 
 # import standard modules
@@ -24,7 +24,8 @@ x = np.linspace(-1,1,n_points)
 # t_array = np.linspace(0,1,1000)
 t_f = 9999#1e-10 #1e-10
 u = np.sin(np.pi*x)
-S = np.zeros(len(x))
+def S(u):
+    return 0
 BCs = [0,1]
 
 df, df_resid = steady_solve(u, x, t_f, S=S, kin_viscosity=0, BCs=BCs, data_save_interval=1)

@@ -18,7 +18,7 @@ from src.viscous_burgers_solver.ssp_rk2 import ssp_rk2, calc_timestep
 ############################################################
 # main function for transient solve of IBVP
 ############################################################
-def transient_solve(u0, x, t_f, S, C=0.1, kin_viscosity=1.5e-5, BCs=[0,0], verbose=True, data_save_interval=0.1):
+def transient_solve(u0, x, t_f, S_fcn, C=0.1, kin_viscosity=1.5e-5, BCs=[0,0], verbose=True, data_save_interval=0.1):
     # make matrices and vectors for finite difference
     A = make_A(u0)
     b = make_b(u0, BCs)
@@ -27,7 +27,7 @@ def transient_solve(u0, x, t_f, S, C=0.1, kin_viscosity=1.5e-5, BCs=[0,0], verbo
 
     # make initial state vectors for solver
     u = u0
-    # S = np.zeros(len(x))
+    S = S_fcn(u)
 
     # make dataframe for storing simulation data
     df = pd.DataFrame({"u":u, "x":x, "t":np.ones(len(u))*t_c})
@@ -60,6 +60,7 @@ def transient_solve(u0, x, t_f, S, C=0.1, kin_viscosity=1.5e-5, BCs=[0,0], verbo
         
         # update to next timestep
         t_c += dt
+        S = S_fcn(u)
 
     # check if there has been a save recently
     if (t_c - np.max(df.t)) > data_save_interval / 2:
@@ -79,7 +80,8 @@ if __name__ == '__main__':
     # t_array = np.linspace(0,1,1000)
     t_f = 0.25#1e-10 #1e-10
     u = np.append(-1*np.ones(int(n_points/2)), 1*np.ones(int(n_points/2)))#100*sp.stats.norm.pdf(x, scale=0.25) #np.zeros(len(x))#-x**2+1
-    S = np.zeros(len(x)) # sp.stats.norm.pdf(x, scale=0.25) #np.zeros(len(x)) #sp.stats.norm.pdf(x)
+    def S(u):
+        return 0 # sp.stats.norm.pdf(x, scale=0.25) #np.zeros(len(x)) #sp.stats.norm.pdf(x)
     BCs = [-1,1]
 
-    transient_solve(u, x, t_f, S=S, kin_viscosity=0, BCs=BCs)
+    transient_solve(u, x, t_f, S, kin_viscosity=0, BCs=BCs)
