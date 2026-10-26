@@ -95,49 +95,38 @@ def part_d(Lx=1,Ld=0.2,J=200):
 
 # main function for (e)
 ###########################################################
-def part_e(Lx=1,Ld=0.2,J=200):
+def part_e(Lx=1,Ld=0.2,J=32):
     # create correlation metric
+    Lc = 3*Ld
     dx=2*Lx/J
     x = np.linspace(dx*(-J/2+1), dx*(J/2), J)
     x1=np.zeros(J)
     x2=Lx*np.ones(J)
     y = np.linspace(dx*(-J/2+1), dx*(J/2), J)
     X, Y = np.meshgrid(x, y)
-    rho = correlation_metric_triangular(X, Y)
-    rho_old = correlation_metric_triangular(X, Y)
-    rho1=correlation_metric_triangular(x1,y)
-    rho1_old=correlation_metric_triangular(x1,y)
-    rho2=correlation_metric_triangular(x2,y)
-    rho2_old=correlation_metric_triangular(x2,y)
+    rho = correlation_metric_triangular(X, Y, Lc)
+    rho1=correlation_metric_triangular(x1,y, Lc)
+    rho2=correlation_metric_triangular(x2,y, Lc)
 
-    # mask correlation metric
-    Lc = 3*Ld
+    # mask values
     rho[np.abs(X - Y) > Lc] = 0
     rho1[np.abs(x1 - y) > Lc] = 0
     rho2[np.abs(x2 - y) > Lc] = 0
 
     # plotting
-    plt.contour(X, Y, rho_old, levels=20)
+    plt.contour(X, Y, rho, levels=10)
     plt.colorbar(label=r"Correlation $\rho(x,y)$")
     plt.ylabel("y")
     plt.xlabel("x")
     plt.title(r"Contour Plot of the Correlation $\rho(x,y)$")
     plt.show()
 
-    plt.contour(X, Y, rho, levels=20)
-    plt.colorbar(label=r"Correlation $\rho(x,y)$")
-    plt.ylabel("y")
-    plt.xlabel("x")
-    plt.title(r"Contour Plot of the Correlation $\rho(x,y)$ With Clipping")
-    plt.show()
 
-    plt.plot(y, rho1_old, label=r"$x_j=0$", alpha=0.7, linestyle="--", zorder=2)
-    plt.plot(y, rho1, label=r"$x_j=0$ with clipping to $0$", zorder=1)
-    plt.plot(y, rho2_old, label=r"$x_j=L_x=1$", linestyle='--', zorder=2)
-    plt.plot(y, rho2, label=r"$x_j=L_x=1$ with clipping to $0$", zorder=1)
+    plt.plot(y, rho1, label=r"$x_j=0$", alpha=0.9, linestyle="-", zorder=2)
+    plt.plot(y, rho2, label=r"$x_j=L_x=1$", alpha=0.9, linestyle='-', zorder=2)
     plt.xlabel(r"$y$")
     plt.ylabel(r"Correlation $\rho(x_j,y)$")
-    plt.title(r"Correlation $\rho (x,y)$ as a function of $y$ at fixed values of $x=x_j$"+"\n"+r"$\rho(x_j,y)=0$ for $|x_j-y|>L_c$")
+    plt.title(r"Correlation $\rho (x,y)$ as a function of $y$ at fixed values of $x=x_j$")
     plt.legend()
     plt.grid(alpha=0.8)
     plt.show()
@@ -146,15 +135,17 @@ def part_e(Lx=1,Ld=0.2,J=200):
 
 # main function for (f)
 ###########################################################
-def part_f(Lx=1, Ld=0.2, J=200):
+def part_f(Lx=1, Ld=0.2, J=32):
     # create correlation metric
+    Lc=3*Ld
     dx=2*Lx/J
     x = np.linspace(dx*(-J/2+1), dx*(J/2), J)
     x1=1
     y = np.linspace(dx*(-J/2+1), dx*(J/2), J)
     X, Y = np.meshgrid(x, y)
     rho_gaussian = correlation_metric(X, Y, Ld)
-    rho_triangular = correlation_metric_triangular(X, Y)
+    rho_triangular = correlation_metric_triangular(X, Y, Lc)
+    rho_triangular[np.abs(X - Y) > Lc] = 0
     rho_combined = rho_gaussian * rho_triangular
 
     # create functions based on the correlation metrics
@@ -164,7 +155,7 @@ def part_f(Lx=1, Ld=0.2, J=200):
 
 
     # plotting
-    plt.contour(X, Y, rho_combined, levels=20)
+    plt.contour(X, Y, rho_combined, levels=10)
     plt.colorbar(label=r"Correlation $\rho(x,y)$")
     plt.ylabel("y")
     plt.xlabel("x")
@@ -190,8 +181,8 @@ def part_f(Lx=1, Ld=0.2, J=200):
 def correlation_metric(x,y,Ld):
     return np.exp(-1/2 * (x-y)**2 / (Ld**2))
 
-def correlation_metric_triangular(x,y):
-    return 1 - np.abs(x-y)
+def correlation_metric_triangular(x,y,Lc):
+    return 1 - np.abs(x-y)/Lc
 
 
 # block for running functions

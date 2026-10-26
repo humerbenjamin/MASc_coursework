@@ -20,6 +20,15 @@ def part_a(Lx=1, Ld=0.2, J=32, num_evals_to_plot=6):
     # solve the eigenproblem
     evals, evecs = np.linalg.eig(rho_gaussian)
     evals_sorting_indices = np.argsort(evals)[::-1]
+    evals_sorted, evals_indices = [evals[ind] for ind in evals_sorting_indices], [ind+1 for ind in evals_sorting_indices]
+
+    # plot the eigenvalues
+    plt.plot(evals_sorted)
+    plt.title(r"Eigenvalues of Correlation Matrix $Q_{ij}$ Over"+"\nEigenvalue Index in Descending Order")
+    plt.ylabel(r"Eigenvalue ($\lambda_q$)")
+    plt.xlabel("Eigenvalue Index")
+    plt.grid(alpha=0.8)
+    plt.show()
 
     # plot the eigenvectors
     for i in range(num_evals_to_plot):
@@ -47,25 +56,25 @@ def part_b(Lx=1, Ld=0.2, J=32, num_evals_to_plot=6, sig_r=1, sig_b=2):
     X, Y = np.meshgrid(x, y)
     Q = correlation_metric(X, Y, Ld)
 
+    # make other matrices and then A
     R = sig_r**2*np.eye(J)
-    D = sig_b**2*np.eye(J)
-
-    P = np.linalg.matmul(np.linalg.matmul(D, Q), D)
-
+    D = sig_b*np.eye(J)
+    P = np.linalg.matmul(D, np.linalg.matmul(Q,D))
     A = np.matmul(P, np.linalg.inv(P+R))
 
     # solve the eigenproblem
     evals_q, evecs_q = np.linalg.eig(Q)
-    evals_sorting_indices_q = np.argsort(evals_q[::-1])
+    evals_sorting_indices_q = np.argsort(evals_q)[::-1]
     evals, evecs = np.linalg.eig(A)
     evals_sorting_indices = np.argsort(evals)[::-1]
 
     # plot the eigenvalues
-    evals_plotting_q = [(1 + ((sig_r/sig_b)**2 / evals_q[ind]))**(-1) for ind in evals_sorting_indices_q]
-    evals_plotting = [(1 + ((sig_r/sig_b)**2 / evals[ind]))**(-1) for ind in evals_sorting_indices]
-        
-    plt.plot(x, evals_plotting_q, label=r"$(1 + \alpha/\lambda_q)^{-1}$")
-    plt.plot(x, evals_plotting, label=r"$\lambda_a$")
+    evals_plotting_q = [1 / (1 + ((sig_r/sig_b)**2 / evals_q[ind])) for ind in evals_sorting_indices_q]
+    evals_plotting = [evals[ind] for ind in evals_sorting_indices]
+    eval_indices = [i+1 for i in range(len(evals_plotting))]
+
+    plt.plot(eval_indices, evals_plotting_q, label=r"$(1 + \alpha/\lambda_q)^{-1}$", zorder=2, linestyle=(0, (4, 5)))
+    plt.plot(eval_indices, evals_plotting, label=r"$\lambda_a$", zorder=1, alpha=0.8)
     plt.title(r"Comparison of Eigenvalues of Matrices $A$ and $Q$")
     plt.ylabel(r"$\lambda$")
     plt.xlabel("Eigenvalue Index (Sorted in Descending Order)")
@@ -102,7 +111,7 @@ def part_c(Lx=1, Ld=0.2, J=32, num_evals_to_plot=6, sig_r=1, sig_b=2, c=1):
 
     # construct matrix A
     R = sig_r**2*np.eye(J)
-    D = sig_b**2*np.eye(J)
+    D = sig_b*np.eye(J)
     P = np.linalg.matmul(np.linalg.matmul(D, Q), D)
     A = np.matmul(P, np.linalg.inv(P+R))
 
@@ -169,5 +178,5 @@ if __name__ == '__main__':
 
     do_c=True
     if do_c:
-        for c in [1, 2, 5, 10]:
-            part_c(c=c, Ld=0.2)
+        for c in [1, 3, 5, 6, 10]:
+            part_c(c=c, Ld=0.05)
