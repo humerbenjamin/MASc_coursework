@@ -40,13 +40,10 @@ def transient_solve(u0, x, t_f, S_fcn, C=0.1, kin_viscosity=1.5e-5, BCs=[0,0], v
 
     while t_c < t_f:
         # calculate timestep
-        dt = min(calc_timestep(u, kin_viscosity, dx, C), t_f - t_c)
+        dt = min(calc_timestep(u, BCs, kin_viscosity, dx, C), t_f - t_c)
         if verbose:
             print(
-                f"t = {t_c:.6e}, "
-                f"min(u) = {np.min(u):.6e}, "
-                f"max(u) = {np.max(u):.6e}, "
-                f"dt = {dt:.6e}"
+                f"t = {t_c:.6e}, " f"min(u) = {np.min(u):.6e}, " f"max(u) = {np.max(u):.6e}, " f"dt = {dt:.6e}"
             )
 
         # save data if timestep condition is met
@@ -56,7 +53,7 @@ def transient_solve(u0, x, t_f, S_fcn, C=0.1, kin_viscosity=1.5e-5, BCs=[0,0], v
 
 
         # ssp-rk2 algorithm
-        u = ssp_rk2(u, x, S, t_c, A, b, dt, kin_viscosity)
+        u = ssp_rk2(u, x, S, t_c, A, b, BCs, dt, kin_viscosity)
         
         # update to next timestep
         t_c += dt
@@ -68,20 +65,3 @@ def transient_solve(u0, x, t_f, S_fcn, C=0.1, kin_viscosity=1.5e-5, BCs=[0,0], v
 
 
     return df
-
-
-
-
-
-
-if __name__ == '__main__':
-    n_points=1000
-    x = np.linspace(-1,1,n_points)
-    # t_array = np.linspace(0,1,1000)
-    t_f = 0.25#1e-10 #1e-10
-    u = np.append(-1*np.ones(int(n_points/2)), 1*np.ones(int(n_points/2)))#100*sp.stats.norm.pdf(x, scale=0.25) #np.zeros(len(x))#-x**2+1
-    def S(u):
-        return 0 # sp.stats.norm.pdf(x, scale=0.25) #np.zeros(len(x)) #sp.stats.norm.pdf(x)
-    BCs = [-1,1]
-
-    transient_solve(u, x, t_f, S, kin_viscosity=0, BCs=BCs)

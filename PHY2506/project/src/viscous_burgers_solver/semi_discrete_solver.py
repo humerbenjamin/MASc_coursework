@@ -39,7 +39,7 @@ def L(u, x, S, t, A=np.array([]), b=np.array([]), BCs=[0,0], nu=1.5e-5):
         else:
             L_conv[i] = (F_godunov(u[i-1],u[i]) - F_godunov(u[i],BCs[1])) / dx
 
-    dudt = L_conv + (nu/dx**2)*A@u + b + S
+    dudt = L_conv + (nu/dx**2)*(A@u + b) + S
 
     return dudt
 
