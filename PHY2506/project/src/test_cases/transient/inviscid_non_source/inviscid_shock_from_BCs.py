@@ -28,7 +28,7 @@ def S(u):
     return 0 # sp.stats.norm.pdf(x, scale=0.25) #np.zeros(len(x)) #sp.stats.norm.pdf(x)
 BCs = [1,-1]
 
-df = transient_solve(u, x, t_f, S, kin_viscosity=0, BCs=BCs, data_save_interval=0.1)
+df, df_ic, df_resid = transient_solve(u, x, t_f, S, kin_viscosity=0, BCs=BCs, data_save_interval=0.1)
 
 
 

@@ -18,7 +18,7 @@ from src.viscous_burgers_solver.ssp_rk2 import ssp_rk2, calc_timestep
 ############################################################
 # main function for steady solve of IBVP
 ############################################################
-def steady_solve(u0, x, S_fcn, n_iter=1000, C=0.1, kin_viscosity=1.5e-5, BCs=[0,0], verbose=True, convergence_threshold=1e-6):
+def steady_solve(u0, x, S_fcn, source_params=[], n_iter=1000, C=0.1, kin_viscosity=1.5e-5, BCs=[0,0], verbose=True, convergence_threshold=1e-6):
     # make matrices and vectors for finite difference
     A = make_A(u0)
     b = make_b(u0, BCs)
@@ -27,7 +27,7 @@ def steady_solve(u0, x, S_fcn, n_iter=1000, C=0.1, kin_viscosity=1.5e-5, BCs=[0,
 
     # make initial state vectors for solver
     u_old = u0.copy()
-    S = S_fcn(u_old)
+    S = S_fcn(u_old, x, t_c, source_params)
 
     # iterate until convergence or num_iter is reached
     n = 0
@@ -75,7 +75,7 @@ def steady_solve(u0, x, S_fcn, n_iter=1000, C=0.1, kin_viscosity=1.5e-5, BCs=[0,
 
         # update to next timestep
         t_c += dt
-        S = S_fcn(u)
+        S = S_fcn(u, x, t_c, source_params)
         n += 1
 
         # update the previous solution vector u

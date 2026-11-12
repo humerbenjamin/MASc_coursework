@@ -64,7 +64,7 @@ def F_godunov(uL,uR):
         elif uR < 0:
             f = (uR**2) / 2
         else:
-            f = 0   # check
+            f = 0
 
     # Case C: no wave
     else:
@@ -106,24 +106,3 @@ def make_b(u, BCs):
     b[-1] = BCs[-1]
 
     return b
-
-
-
-
-if __name__ == '__main__':
-    x = np.linspace(-1,1,1000)
-    t_array = np.linspace(0,1,1000)
-    dt = t_array[1]-t_array[0]
-    u = np.zeros(len(x))#-x**2+1
-    S = sp.stats.norm.pdf(x)
-
-    # t_array = t_array[:20]
-
-    for t in t_array:
-        plt.plot(x,u, label=f"t={str(t)[:6]}")
-        dudt = L(u,x,S,t)
-        u = u+dudt*dt
-
-    plt.grid(alpha=0.7)
-    plt.legend()
-    plt.show()

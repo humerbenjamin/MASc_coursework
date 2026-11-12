@@ -131,6 +131,9 @@ ave_kernel = eye(nx) - (B/B_prior);
 
 ave_kernel
 
+DOF=trace(ave_kernel);
+DOF
+
 plot([1:nx],ave_kernel');
 
 ax=gca;
@@ -142,3 +145,19 @@ set(ax,'XTickLabel',{'China ','Korea','Japan','SEAsia','India','BoAsia','ROW'})
 reduced_chisq = prior_chisq/totalobs
 
 
+
+
+
+
+%----------------------------------------------------------
+% personal additions for calculating additional quantities
+%----------------------------------------------------------
+
+results_c = table;
+results_c.Sources = sources;
+results_c.x_prior = x_prior;
+results_c.x = x;
+results_c.increment = x - x_prior;
+results_c.prior_error = prior_err;
+
+results_c
