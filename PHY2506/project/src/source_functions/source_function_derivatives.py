@@ -47,13 +47,13 @@ There may be optional hyperparameters specified after the standard source_params
 ############################################################
 
 # diff wrt u
-def dS_du(u, x, t, source_params):
+def gaussian_x_multiplied_by_u_du(u, x, source_params):
     a, mu, sigma = source_params
     return (a / np.sqrt(2 * np.pi * sigma**2)
             * np.exp(-(x - mu)**2 / (2 * sigma**2)))
 
 # diff wrt k
-def dS_dk(u, x, t, source_params, k_index=0):
+def gaussian_x_multiplied_by_u_dk(u, x, source_params, k_index=0):
     a, mu, sigma = source_params
     if k_index == 0:
         return (u / np.sqrt(2 * np.pi * sigma**2)

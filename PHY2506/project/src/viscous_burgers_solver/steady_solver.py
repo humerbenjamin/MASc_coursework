@@ -27,7 +27,7 @@ def steady_solve(u0, x, S_fcn, source_params=[], n_iter=1000, C=0.1, kin_viscosi
 
     # make initial state vectors for solver
     u_old = u0.copy()
-    S = S_fcn(u_old, x, t_c, source_params)
+    S = S_fcn(u_old, x, source_params)
 
     # iterate until convergence or num_iter is reached
     n = 0
@@ -41,7 +41,7 @@ def steady_solve(u0, x, S_fcn, source_params=[], n_iter=1000, C=0.1, kin_viscosi
         dt = calc_timestep(u_old, BCs, kin_viscosity, dx, C)
 
         # ssp-rk2 algorithm
-        u = ssp_rk2(u_old, x, S, t_c, A, b, BCs, dt, kin_viscosity)
+        u, u_tilde = ssp_rk2(u_old, x, S, t_c, A, b, BCs, dt, kin_viscosity)
 
         # calculate residual
         R = np.sum(np.abs(u - u_old))
@@ -75,7 +75,7 @@ def steady_solve(u0, x, S_fcn, source_params=[], n_iter=1000, C=0.1, kin_viscosi
 
         # update to next timestep
         t_c += dt
-        S = S_fcn(u, x, t_c, source_params)
+        S = S_fcn(u, x, source_params)
         n += 1
 
         # update the previous solution vector u

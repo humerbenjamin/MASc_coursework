@@ -19,7 +19,7 @@ from src.viscous_burgers_solver.transient_solver import transient_solve
 
 # define source function
 ############################################################
-def S_fcn(u,x,t, a=-2, mu=0, sig=0.5):
+def S_fcn(u,x, a=-2, mu=0, sig=0.5):
     S = a*u *  1 / np.sqrt(2*np.pi*sig**2) * np.exp((-(x-mu)**2) / (2*sig**2))
     return S
 
@@ -32,7 +32,7 @@ t_f = 1.6#1e-10 #1e-10
 u = np.zeros(len(x)) # np.append(1*np.ones(int(n_points/2)), -1*np.ones(int(n_points/2)))#100*sp.stats.norm.pdf(x, scale=0.25) #np.zeros(len(x))#-x**2+1
 BCs = [2,-2]
 
-df, df_ic, df_resid = transient_solve(u, x, t_f, S_fcn, kin_viscosity=0, BCs=BCs, data_save_interval=0.1, verbose=False)
+df, df_ic, df_resid, df_alldata = transient_solve(u, x, t_f, S_fcn, kin_viscosity=0, BCs=BCs, data_save_interval=0.1, verbose=False)
 
 
 

@@ -48,7 +48,7 @@ There may be optional hyperparameters specified after the standard source_params
 
 # gaussian in x multiplied by u, weighted by constant a
 ############################################################
-def gaussian_x_multiplied_by_u(u,x,t,source_params):
+def gaussian_x_multiplied_by_u(u,x,source_params):
     S = source_params[0]*u *  1 / np.sqrt(2*np.pi*source_params[2]**2) * np.exp((-(x-source_params[1])**2) / (2*source_params[2]**2))
 
     return S

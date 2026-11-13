@@ -19,7 +19,7 @@ from src.viscous_burgers_solver.steady_solver import steady_solve
 
 # define source function
 ############################################################
-def S_fcn(u,x,t, source_params):
+def S_fcn(u,x, source_params):
     S = source_params[0]*u *  1 / np.sqrt(2*np.pi*source_params[2]**2) * np.exp((-(x-source_params[1])**2) / (2*source_params[2]**2))
     # S = -2*u *  1 / np.sqrt(2*np.pi*0.5**2) * np.exp((-(x-0)**2) / (2*0.5**2))
     return S

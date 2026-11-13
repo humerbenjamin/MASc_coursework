@@ -7,6 +7,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import warnings
     # sublibraries
+from time import time
 
 # import personal files
 ############################################################
@@ -18,7 +19,9 @@ from src.viscous_burgers_solver.ssp_rk2 import ssp_rk2, calc_timestep
 ############################################################
 # main function for transient solve of IBVP
 ############################################################
-def transient_solve(u0, x, t_f, S_fcn, source_params=[], C=0.1, kin_viscosity=1.5e-5, BCs=[0,0], verbose=True, data_save_interval=0.1, strict_data_saving=False):
+def transient_solve(u0, x, t_f, S_fcn, source_params=[], C=0.1, kin_viscosity=1.5e-5, BCs=[0,0], verbose=True, data_save_interval=0.1, strict_data_saving=False, printout_solve_time=False, solve_number=1, save_alldata=False):
+    t_start = time()
+
     # make matrices and vectors for finite difference
     A = make_A(u0)
     b = make_b(u0, BCs)
@@ -26,16 +29,21 @@ def transient_solve(u0, x, t_f, S_fcn, source_params=[], C=0.1, kin_viscosity=1.
     dx = np.abs(x[1]-x[0])
 
     # make initial state vectors for solver
-    u = u0.copy()
-    u_old = u.copy()
-    S = S_fcn(u, x, t_c, source_params)
+    u = np.array(u0.copy())
+    u_old = np.array(u.copy())
+    S = S_fcn(u, x, source_params)
 
     # make df for initial condition passed to solver
-    df_ic = pd.DataFrame({"u":u0, "x":x, "t":np.ones(len(u0))*t_c})
+    df_ic = pd.DataFrame({"u":u0.copy(), "x":x, "t":np.ones(len(u0))*t_c})
 
     # make dataframe for storing simulation data
-    df = pd.DataFrame({"u":u, "x":x, "t":np.ones(len(u))*t_c})
-    t_saving = data_save_interval
+    # df = pd.DataFrame({"u":u, "x":x, "t":np.ones(len(u))*t_c})
+    onevector = np.ones(len(u))
+    u_data, x_data, t_data = [u.copy()], x.copy(), [(onevector*t_c).copy()]
+
+    # make dataframe for saving all data in case the inverse problem needs to be calculated
+    # df_alldata = pd.DataFrame({"u":u, "x":x, "t":np.ones(len(u))*t_c})
+    u_alldata, u_tilde_alldata, t_alldata = [u.copy()], [], [(onevector*t_c).copy()]
 
     # make array of times when data is being saved
     data_save_times = make_data_save_times(t_f, data_save_interval)
@@ -56,12 +64,24 @@ def transient_solve(u0, x, t_f, S_fcn, source_params=[], C=0.1, kin_viscosity=1.
 
         # save data if timestep condition is met
         if is_saving_step:
-            df = pd.concat([df, pd.DataFrame({"u":u, "x":x, "t":np.ones(len(u))*cur_save_time})])
-            t_saving += data_save_interval
+            # do normal saving data array
+            u_data.append(u.copy())
+            t_data.append((onevector*cur_save_time).copy())
+            # do alldata array
+            # u_alldata.append(u.copy())
+            # t_alldata.append((onevector*cur_save_time).copy())
+
+        if save_alldata:
+            u_alldata.append(u.copy())
+            t_alldata.append((onevector*t_c).copy())
 
 
         # ssp-rk2 algorithm
-        u = ssp_rk2(u, x, S, t_c, A, b, BCs, dt, kin_viscosity)
+        u, u_tilde = ssp_rk2(u, x, S, t_c, A, b, BCs, dt, kin_viscosity)
+
+        # save intermediate data if timestep condition is met     
+        if save_alldata:
+            u_tilde_alldata.append(u_tilde.copy())
 
                 # calculate residual
         R = np.sum(np.abs(u - u_old))
@@ -82,22 +102,27 @@ def transient_solve(u0, x, t_f, S_fcn, source_params=[], C=0.1, kin_viscosity=1.
             t_array.append(t_c)
             R_array.append(R)
             R_norm_array.append(R_norm)
-        
+
         # update to next timestep
         t_c += dt
-        S = S_fcn(u, x, t_c, source_params)
+        S = S_fcn(u, x, source_params)
         n += 1
         u_old = u.copy()
 
+    u_tilde_alldata.append(np.full(len(u), np.nan))
+
+
+    # make dataframes
     df_resid = pd.DataFrame({"n":n_array,"t":t_array, "R":R_array, "R_norm":R_norm_array})
+    df = pd.DataFrame({"u":np.concatenate(u_data), "x":np.tile(x, len(u_data)), "t":np.concatenate(t_data)})
+    df_alldata = pd.DataFrame({"u":np.concatenate(u_alldata), "u_tilde":np.concatenate(u_tilde_alldata), "x":np.tile(x, len(u_alldata)), "t":np.concatenate(t_alldata)})
+
+    # printout elapsed time if relevant
+    if printout_solve_time:
+        print(f"Forward solve {solve_number} complete in {(time() - t_start):.2f} seconds.")
 
 
-    # check if there has been a save recently
-    if (t_c - np.max(df.t)) > data_save_interval / 2:
-        df = pd.concat([df, pd.DataFrame({"u":u, "x":x, "t":np.ones(len(u))*t_c})])
-
-
-    return df, df_ic, df_resid
+    return df, df_ic, df_resid, df_alldata
 
 
 

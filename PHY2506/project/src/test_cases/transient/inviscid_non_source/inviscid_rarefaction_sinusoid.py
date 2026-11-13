@@ -28,7 +28,7 @@ def S(u):
     return 0
 BCs = [0,0]
 
-df, df_ic, df_resid = transient_solve(u, x, t_f, S, kin_viscosity=0, BCs=BCs, data_save_interval=0.2)
+df, df_ic, df_resid, df_alldata = transient_solve(u, x, t_f, S, kin_viscosity=0, BCs=BCs, data_save_interval=0.2)
 
 for t in np.unique(np.array(df.t)):
     df_t = df[df.t == t]

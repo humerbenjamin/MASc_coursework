@@ -17,7 +17,7 @@ def ssp_rk2(u, x, S, t_c, A, b, BCs, dt, kin_viscosity):
     u_tilde = u + dt * L(u, x, S, t_c, A, b, BCs, nu=kin_viscosity)
     u_f = 1/2*u + 1/2*(u_tilde + dt*L(u_tilde, x, S, t_c, A, b, BCs, nu=kin_viscosity))
 
-    return u_f
+    return u_f, u_tilde
 
 
 ############################################################

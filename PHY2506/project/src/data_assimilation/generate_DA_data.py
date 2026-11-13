@@ -64,7 +64,7 @@ def generate_data(
 
     # find transient soluttion if the data is transient
     elif solve_type == 'transient':
-        df, df_ic, df_resid = transient_solve(u0, x, t_f, S_fcn, source_parameters, C, kin_viscosity, BCs, verbose=verbose, data_save_interval=data_save_interval, strict_data_saving=strict_data_saving)
+        df, df_ic, df_resid, df_alldata = transient_solve(u0, x, t_f, S_fcn, source_parameters, C, kin_viscosity, BCs, verbose=verbose, data_save_interval=data_save_interval, strict_data_saving=strict_data_saving)
 
         # generate mapping matrix from simulation to observation space
         H, measurement_indices = make_H_matrix(measurement_locations, df_ic.x)
