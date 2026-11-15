@@ -34,7 +34,7 @@ S_fcn = gaussian_x_multiplied_by_u
 S_fcn_du = gaussian_x_multiplied_by_u_du
 S_fcn_dk = gaussian_x_multiplied_by_u_dk
 
-source_parameters = [-2, 0, 0.5]
+source_parameters_initial = [-1.5, 0, 0.4]
 
 C = 0.2
 
@@ -43,4 +43,10 @@ BCs = [2,-2]
 
 verbose=False
 
-variational_DA_transient("data/test", S_fcn, source_parameters, S_fcn_du, S_fcn_dk, C, nu, BCs, verbose)
+parameter_covariance_matrix = np.eye(3)
+obs_cov_matrix = np.eye(40)
+
+variational_DA_transient(   
+                            "data/test", S_fcn, source_parameters_initial, S_fcn_du, S_fcn_dk,
+                            parameter_covariance_matrix, obs_cov_matrix, C, nu, BCs, verbose
+                        )

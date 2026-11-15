@@ -19,7 +19,7 @@ from src.viscous_burgers_solver.ssp_rk2 import ssp_rk2, calc_timestep
 ############################################################
 # main function for transient solve of IBVP
 ############################################################
-def transient_solve(u0, x, t_f, S_fcn, source_params=[], C=0.1, kin_viscosity=1.5e-5, BCs=[0,0], verbose=True, data_save_interval=0.1, strict_data_saving=False, printout_solve_time=False, solve_number=1, save_alldata=False):
+def transient_solve(u0, x, t_f, S_fcn, source_params=[], C=0.1, kin_viscosity=1.5e-5, BCs=[0,0], verbose=True, data_save_interval=0.1, printout_solve_time=False, solve_number=1, save_alldata=False):
     t_start = time()
 
     # make matrices and vectors for finite difference
@@ -52,7 +52,7 @@ def transient_solve(u0, x, t_f, S_fcn, source_params=[], C=0.1, kin_viscosity=1.
     n = 0
     while t_c < t_f:
         # calculate timestep
-        dt, is_saving_step, cur_save_time = calc_timestep(u, BCs, kin_viscosity, dx, C, t_c, data_save_times, strict_data_saving)
+        dt, is_saving_step, cur_save_time = calc_timestep(u, BCs, kin_viscosity, dx, C, t_c, data_save_times)
 
         # calculate whether this would correspond to a data saving timestep
 
@@ -62,26 +62,10 @@ def transient_solve(u0, x, t_f, S_fcn, source_params=[], C=0.1, kin_viscosity=1.
                 f"t = {t_c:.6e}, " f"min(u) = {np.min(u):.6e}, " f"max(u) = {np.max(u):.6e}, " f"dt = {dt:.6e}"
             )
 
-        # save data if timestep condition is met
-        if is_saving_step:
-            # do normal saving data array
-            u_data.append(u.copy())
-            t_data.append((onevector*cur_save_time).copy())
-            # do alldata array
-            # u_alldata.append(u.copy())
-            # t_alldata.append((onevector*cur_save_time).copy())
-
-        if save_alldata:
-            u_alldata.append(u.copy())
-            t_alldata.append((onevector*t_c).copy())
 
 
         # ssp-rk2 algorithm
         u, u_tilde = ssp_rk2(u, x, S, t_c, A, b, BCs, dt, kin_viscosity)
-
-        # save intermediate data if timestep condition is met     
-        if save_alldata:
-            u_tilde_alldata.append(u_tilde.copy())
 
                 # calculate residual
         R = np.sum(np.abs(u - u_old))
@@ -108,6 +92,24 @@ def transient_solve(u0, x, t_f, S_fcn, source_params=[], C=0.1, kin_viscosity=1.
         S = S_fcn(u, x, source_params)
         n += 1
         u_old = u.copy()
+
+
+        # Save scheduled data
+        if is_saving_step:
+            u_data.append(u.copy())
+            t_data.append((onevector*cur_save_time).copy())
+
+        # save data
+        if save_alldata:
+            u_tilde_alldata.append(u_tilde.copy())
+            u_alldata.append(u.copy())
+
+            if is_saving_step:
+                t_alldata.append((onevector*cur_save_time).copy())
+            else:
+                t_alldata.append((onevector*t_c).copy())
+
+
 
     u_tilde_alldata.append(np.full(len(u), np.nan))
 
@@ -136,6 +138,6 @@ def make_data_save_times(t_f, data_save_interval):
         data_save_times.append(data_save_interval*i)
         i += 1
 
-    data_save_times.append(t_f)
+    data_save_times.append(round(t_f, 4))
 
     return np.array(data_save_times)

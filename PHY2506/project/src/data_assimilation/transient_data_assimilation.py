@@ -17,18 +17,24 @@ from time import time
 from src.viscous_burgers_solver.transient_solver import transient_solve
 from src.data_assimilation.generate_DA_data import make_H_matrix
 from src.data_assimilation.adjoint_variable_calculation import calc_terminal_adjoint_variables, calc_non_terminal_adjoint_variables
-from src.data_assimilation.calculate_jacobians import calc_dM_dU
-
+from src.data_assimilation.calculate_jacobians import calc_dM_dU, calc_dtR_dk
+from src.data_assimilation.cost_function import cost_function_with_parameter_regularization, backtracking_line_search
 
 
 
 ############################################################
+############################################################
 # main function for 4Dvar of transient solutions
+############################################################
+############################################################
+
+# 4Dvar Function
 ############################################################
 def variational_DA_transient(
                                 data_loc,                                                               # location of data to be read in
                                 source_function, source_parameters_initial,                             # source functions
                                 source_function_derivative_u, source_function_derivative_k,             # source function derivatives
+                                parameter_cov_matrix, observation_cov_matrix,                           # covariance matrices
                                 C, kin_viscosity, BCs, verbose                                          # 
                             ):
     '''
@@ -71,67 +77,26 @@ def variational_DA_transient(
                                                             S_fcn=source_function, source_params=k,
                                                             C=C, kin_viscosity=kin_viscosity, BCs=BCs,
                                                             verbose=verbose,
-                                                            data_save_interval=data_save_interval, strict_data_saving=True,
+                                                            data_save_interval=data_save_interval,
                                                             printout_solve_time=True, solve_number=solve_number,
                                                             save_alldata=True
                                                          )
 
+        
+
         # plot the forward transient run if required
         plot_transient_solve_single_run_forward_plot(df, df_ic, df_resid)
 
-        # precalculate data that is required for the inverse problem
-        reverse_sorted_times = np.sort(np.unique(df_alldata.t))[::-1]
-        obs_cov_inverse = np.eye(len(df_noisy[df_noisy.t == 0].u_noisy))
-        x = df_alldata[df_alldata.t == 0].x
-        dx = x[1] - x[0]
 
-        # calculate the adjoint variables and then store them all for computing the gradient later
-        adjoint_vars_all_times = []
-        for time_ind in range(len(reverse_sorted_times) - 1):
-            # seperate arrays at this specific time
-            time = reverse_sorted_times[time_ind]
-            dt = reverse_sorted_times[time_ind] - reverse_sorted_times[time_ind + 1]
-            df_singletime = df_alldata[(np.abs(df_alldata.t - time) == np.abs(df_alldata.t - time).min())]
-            df_obs_singletime = df_noisy[(np.abs(df_noisy.t - time) == np.abs(df_noisy.t - time).min()) & (df_noisy.t > reverse_sorted_times[time_ind + 1])]
+        # do the inverse solve
+        # FIX THIS FIRST
+        inverse_problem_solve()
 
+
+        print(accumulated_parameter_gradient)
+
+        print(k, k_new)
         
-            print(time_ind, reverse_sorted_times[time_ind], len(df_obs_singletime), len(df_singletime), dt)
-
-            # print(df_noisy)
-
-            df_singletime.to_csv("test.csv", index=False)
-            df_obs_singletime.to_csv("test_obs.csv", index=False)
-
-            # calculate the adjoint variables
-            if time == reverse_sorted_times[0]:
-                # handle the case containing observations
-                if len(df_obs_singletime) > 0:
-                    adjoint_vars = calc_terminal_adjoint_variables(H, HT, df_singletime.u.to_numpy(), df_obs_singletime.u_noisy.to_numpy(), obs_cov_inverse, True)
-                    adjoint_vars_all_times.append(adjoint_vars)
-                
-                # handle the case which does not contain observations
-                else:
-                    adjoint_vars = calc_terminal_adjoint_variables(H, HT, df_singletime.u.to_numpy(), df_obs_singletime.u_noisy.to_numpy(), obs_cov_inverse, False)
-                    adjoint_vars_all_times.append(adjoint_vars)
-
-            else:
-                # calculate the model jacobian transpose
-                model_jacobian_transpose = calc_dM_dU(df_singletime.u.to_numpy(), df_singletime.u_tilde.to_numpy(), df_singletime.x.to_numpy(), kin_viscosity, dx, dt, source_function_derivative_u, k).T
-
-                # handle the case containing observations
-                if len(df_obs_singletime) > 0:
-                    adjoint_vars = calc_non_terminal_adjoint_variables(H, HT, df_singletime.u.to_numpy(), df_obs_singletime.u_noisy.to_numpy(), obs_cov_inverse, model_jacobian_transpose, adjoint_vars, True)  
-                    adjoint_vars_all_times.append(adjoint_vars)
-
-                # handle the case which does not contain observations
-                else:
-                    adjoint_vars = calc_non_terminal_adjoint_variables(H, HT, df_singletime.u.to_numpy(), df_obs_singletime.u_noisy.to_numpy(), obs_cov_inverse, model_jacobian_transpose, adjoint_vars, False)  
-                    adjoint_vars_all_times.append(adjoint_vars)
-
-
-            if time_ind == 1:
-                break
-            
         print(len(reverse_sorted_times), print(len(adjoint_vars_all_times)))
 
         plt.plot(df_ic.x, adjoint_vars)
@@ -147,6 +112,105 @@ def variational_DA_transient(
     return
 
 
+
+############################################################
+############################################################
+# subfunctions
+############################################################
+############################################################
+
+# function for inverse solve
+############################################################
+def inverse_problem_solve():
+    # precalculate data that is required for the inverse problem
+    reverse_sorted_times = np.sort(np.unique(df_alldata.t))[::-1]
+    obs_cov_inverse = np.eye(len(df_noisy[df_noisy.t == 0].u_noisy))
+    x = df_alldata[df_alldata.t == 0].x
+    dx = x[1] - x[0]
+
+    # set up variables for the accumulated parameter gradient
+    accumulated_parameter_gradient = 0
+
+    # calculate the adjoint variables and then store them all for computing the gradient later
+    adjoint_vars_all_times = []
+    for time_ind in range(len(reverse_sorted_times) - 1):
+        # get time information
+        time = reverse_sorted_times[time_ind]
+        dt = reverse_sorted_times[time_ind] - reverse_sorted_times[time_ind + 1]
+
+        # separate arrays at this specific time from the dfs
+        df_singletime = df_alldata[np.isclose(df_alldata.t, reverse_sorted_times[time_ind], atol=1e-10)]
+        df_obs_singletime = df_noisy[np.isclose(df_noisy.t, reverse_sorted_times[time_ind], atol=1e-10)]
+    
+        # print(time_ind, reverse_sorted_times[time_ind], len(df_obs_singletime), len(df_singletime), dt)
+
+        # use the previous adjoint variables to calculate the accumulated parameter gradient
+            # calculate the residual jacobian wrt k
+        dtR_dk = calc_dtR_dk(    
+                                df_singletime.u.to_numpy(), df_singletime.u_tilde.to_numpy(), df_singletime.x.to_numpy(), 
+                                dt, kin_viscosity, dx, source_function_derivative_k, source_function_derivative_u, k
+                            )
+            # calculate the accumulated gradient
+        if time_ind != 0:
+            accumulated_parameter_gradient += dtR_dk.T @ adjoint_vars
+
+        # calculate the adjoint variables
+            # initial time case
+        if time == reverse_sorted_times[0]:
+            # handle the case containing observations
+            if len(df_obs_singletime) > 0:
+                adjoint_vars = calc_terminal_adjoint_variables(H, HT, df_singletime.u.to_numpy(), df_obs_singletime.u_noisy.to_numpy(), obs_cov_inverse, True)
+                adjoint_vars_all_times.append(adjoint_vars)
+            
+            # handle the case which does not contain observations
+            else:
+                adjoint_vars = calc_terminal_adjoint_variables(H, HT, df_singletime.u.to_numpy(), df_obs_singletime.u_noisy.to_numpy(), obs_cov_inverse, False)
+                adjoint_vars_all_times.append(adjoint_vars)
+        
+            # all other times in this case
+        else:
+            # calculate the model jacobian transpose
+            model_jacobian_transpose = calc_dM_dU(df_singletime.u.to_numpy(), df_singletime.u_tilde.to_numpy(), df_singletime.x.to_numpy(), kin_viscosity, dx, dt, source_function_derivative_u, k).T
+
+            # handle the case containing observations
+            if len(df_obs_singletime) > 0:
+                adjoint_vars = calc_non_terminal_adjoint_variables(H, HT, df_singletime.u.to_numpy(), df_obs_singletime.u_noisy.to_numpy(), obs_cov_inverse, model_jacobian_transpose, adjoint_vars, True)  
+                adjoint_vars_all_times.append(adjoint_vars)
+
+            # handle the case which does not contain observations
+            else:
+                adjoint_vars = calc_non_terminal_adjoint_variables(H, HT, df_singletime.u.to_numpy(), df_obs_singletime.u_noisy.to_numpy(), obs_cov_inverse, model_jacobian_transpose, adjoint_vars, False)  
+                adjoint_vars_all_times.append(adjoint_vars)
+
+
+    # filter dataframes for t=0
+    df_singletime = df_alldata[np.isclose(df_alldata.t, reverse_sorted_times[time_ind+1], atol=1e-10)]
+    df_obs_singletime = df_noisy[np.isclose(df_noisy.t, reverse_sorted_times[time_ind+1], atol=1e-10)]
+
+    # last addition to the accumulated parameter gradient
+    dtR_dk = calc_dtR_dk(    
+                    df_singletime.u.to_numpy(), df_singletime.u_tilde.to_numpy(), df_singletime.x.to_numpy(), 
+                    dt, kin_viscosity, dx, source_function_derivative_k, source_function_derivative_u, k
+                )
+    accumulated_parameter_gradient += parameter_cov_matrix @ (k-k0) + dtR_dk.T @ adjoint_vars
+
+    # calculate what the parameter should be for updating the parameters
+    k_new, alpha, J_new = backtracking_line_search(
+                                                        k, k0, accumulated_parameter_gradient,
+                                                        cost_function_with_parameter_regularization,
+                                                        df_alldata, df_noisy, H,
+                                                        observation_cov_matrix, parameter_cov_matrix
+                                                    )
+
+
+    return
+
+
+############################################################
+############################################################
+# plotting functions
+############################################################
+############################################################
 
 ############################################################
 # plot the transient solve data for a single forward run

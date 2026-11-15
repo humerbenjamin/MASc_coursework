@@ -245,7 +245,8 @@ def dLi_duj(
                 i,j,                                        # indices
                 nu, dx,                                     # residual calculators
                 source_derivative_function_u,               # specified analytical function for the derivative of the source terms
-                source_parameters                           # source parameters for the 
+                source_parameters,                          # source parameters for the 
+                warning_diagnostics=False
             ):
 
     if (i == 0) or (i == len(u)-1):
@@ -266,7 +267,8 @@ def dLi_duj(
     # warning to not calculate non-tridiagonal entries
     else:
         dL_du = 0
-        warnings.warn("The function dLi_duj was called on an entry that is not tridiagonal.\n\tThe derivative has been set to zero, but the computational efficiency of utilizing sparse matrix algorithms may be lost!")
+        if warning_diagnostics:
+            warnings.warn("The function dLi_duj was called on an entry that is not tridiagonal.\n\tThe derivative has been set to zero, but the computational efficiency of utilizing sparse matrix algorithms may be lost!")
 
 
     return dL_du

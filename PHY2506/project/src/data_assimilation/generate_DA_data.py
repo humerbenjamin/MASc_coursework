@@ -30,7 +30,7 @@ def generate_data(
                     S_fcn, source_parameters,                                       # source function requirements
                     kin_viscosity=1.5e-5, BCs=[0,0],                                # additional system parameters
                     n_iter=1000, C=0.1, convergence_threshold=1e-6,                 # solver parameters for steady solve
-                    t_f=2, data_save_interval=0.1, strict_data_saving=True,         # solver parameters for transient solve
+                    t_f=2, data_save_interval=0.1,                                  # solver parameters for transient solve
                     verbose=False, plot_values=True,                                # midstream outputs
                     output_filename='data/test',                                    # data locations
                     measurement_locations=[], random_seed=42, SNR=0.1               # noisy measurement generation
@@ -64,7 +64,7 @@ def generate_data(
 
     # find transient soluttion if the data is transient
     elif solve_type == 'transient':
-        df, df_ic, df_resid, df_alldata = transient_solve(u0, x, t_f, S_fcn, source_parameters, C, kin_viscosity, BCs, verbose=verbose, data_save_interval=data_save_interval, strict_data_saving=strict_data_saving)
+        df, df_ic, df_resid, df_alldata = transient_solve(u0, x, t_f, S_fcn, source_parameters, C, kin_viscosity, BCs, verbose=verbose, data_save_interval=data_save_interval)
 
         # generate mapping matrix from simulation to observation space
         H, measurement_indices = make_H_matrix(measurement_locations, df_ic.x)

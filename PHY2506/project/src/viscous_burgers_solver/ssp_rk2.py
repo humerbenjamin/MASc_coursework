@@ -26,7 +26,7 @@ def ssp_rk2(u, x, S, t_c, A, b, BCs, dt, kin_viscosity):
 
 # timestep calculation
 ############################################################
-def calc_timestep(u, BCs, kin_viscosity, dx, C, t_cur, save_times, strict_data_saving):
+def calc_timestep(u, BCs, kin_viscosity, dx, C, t_cur, save_times):
 
     max_u = np.max([np.max(np.abs(u)), np.max(np.abs(BCs))])
 
@@ -42,18 +42,16 @@ def calc_timestep(u, BCs, kin_viscosity, dx, C, t_cur, save_times, strict_data_s
 
         dt = C * min(dt_conv, dt_diff)
 
-    # Limit timestep to reach the next save time exactly
+    # Find the next scheduled saving time
     next_save_time = save_times[save_times > t_cur][0]
 
+    # Limit timestep to reach the next saving time exactly
     dt_save = next_save_time - t_cur
 
-    if dt_save < dt:
+    if dt >= dt_save:
+        dt = dt_save
         saving_step = True
-        
     else:
         saving_step = False
-
-    if strict_data_saving:
-        dt=min(dt, dt_save)
 
     return dt, saving_step, next_save_time

@@ -13,7 +13,7 @@ from time import time
 
 
 ############################################################
-# calculate adjoint varaibles
+# calculate adjoint variables
 ############################################################
 
 # calculate the adjoint variables for the n=N case
@@ -22,7 +22,7 @@ def calc_terminal_adjoint_variables(H, HT, model_state, obs_vector, obs_cov_inve
     if has_observations:
         adjoint_vars = -HT @ obs_cov_inverse @ (H@model_state - obs_vector)
     else:
-        adjoint_vars = np.zeros(H.size[0])
+        adjoint_vars = np.zeros(len(model_state))
 
     return adjoint_vars
 
@@ -30,7 +30,6 @@ def calc_terminal_adjoint_variables(H, HT, model_state, obs_vector, obs_cov_inve
 # calculate the adjoint variables for the n={1,...,N-1} case
 ############################################################
 def calc_non_terminal_adjoint_variables(H, HT, model_state, obs_vector, obs_cov_inverse, model_jacobian_transpose, prev_adjoint_vars, has_observations=False):
-    print("\t",np.size(model_jacobian_transpose), np.size(prev_adjoint_vars))
     if has_observations:
         adjoint_vars = model_jacobian_transpose @ prev_adjoint_vars - HT @ obs_cov_inverse @ (H@model_state - obs_vector)
     else:

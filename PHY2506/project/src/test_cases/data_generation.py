@@ -45,7 +45,7 @@ generate_data(
                 gaussian_x_multiplied_by_u, source_parameters,                              # source function and parameters
                 kin_viscosity, BCs,                                                         # additional system parameters
                 n_iter, C, convergence_threshold,                                           # solver parameters for steady solver
-                t_f=1.5, data_save_interval=0.1, strict_data_saving=True,                   # solver parameters for transient solve
+                t_f=1.5, data_save_interval=0.1,                                            # solver parameters for transient solve
                 verbose=False, plot_values=True,                                            # midstream outputs
                 output_filename='data/test',                                                # data locations
                 measurement_locations=measurement_locations, random_seed=42, SNR=0.1        # noisy measurement generation
