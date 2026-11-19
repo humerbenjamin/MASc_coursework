@@ -1,0 +1,303 @@
+% ----------------------
+% THIS IS MY RAC1 REPORT
+% ----------------------
+
+\documentclass[titlepage,12pt,letterpaper]{article}
+
+\usepackage{graphicx,epsfig,color}
+\usepackage{subfigure}
+\usepackage{setspace}
+\usepackage{amsmath,amssymb}
+\usepackage[hang,small,bf]{caption}
+\setlength{\captionmargin}{10pt}
+
+
+\newcommand{\pd}[2]{\frac{\partial#1}{\partial#2}}
+% Page Margins
+\voffset=-1.0in
+\topmargin=0.75in
+\headheight=0.0in
+\headsep=0.0in
+\hoffset=-1.0in
+\oddsidemargin=0.7in
+\evensidemargin=0.7in
+
+\parindent=0.2000in
+
+\textwidth=7.0in
+\textheight=9.25in
+
+% Line Spacing
+\renewcommand{\baselinestretch}{1.33}
+
+% Alter some LaTeX defaults for better treatment of figures
+% See p.105 of "TeX Unbound" for suggested values.
+    % See pp. 199-200 of Lamport's "LaTeX" book for details.
+    %   General parameters, for ALL pages:
+    \renewcommand{\topfraction}{0.9}	% max fraction of floats at top
+    \renewcommand{\bottomfraction}{0.8}	% max fraction of floats at bottom
+    %   Parameters for TEXT pages (not float pages):
+   \setcounter{topnumber}{2}
+    \setcounter{bottomnumber}{2}
+    \setcounter{totalnumber}{4}     % 2 may work better
+    \setcounter{dbltopnumber}{2}    % for 2-column pages
+    \renewcommand{\dbltopfraction}{0.9}	% fit big float above 2-col. text
+    \renewcommand{\textfraction}{0.07}	% allow minimal text w. figs
+    %   Parameters for FLOAT pages (not text pages):
+    \renewcommand{\floatpagefraction}{0.7}	% require fuller float pages
+	% N.B.: floatpagefraction MUST be less than topfraction !!
+    \renewcommand{\dblfloatpagefraction}{0.7}	% require fuller float pages
+
+    % remember to use [htp] or [htpb] for placement
+
+%\newcommand*{\drop}{\ce*{0.2\textheight}}
+
+
+\onehalfspacing
+\begin{document}
+
+
+\newcommand*{\titleRR}
+{\begingroup
+  \centering
+  \vfill
+  \vspace*{3.cm}
+  {\LARGE Development of an Adjoint-Based Data Assimilation}\\
+  \vspace*{0.3cm}
+  {\LARGE Approach for Parameter Estimation in a Multi-Fluid}\\
+ \vspace*{0.3cm}
+  {\LARGE Multi-Moment Plasma Model}\\
+  \vspace*{2.0cm}
+  {\large Benjamin Humer}\\
+  \vspace*{2.cm}
+  {\normalsize\itshape University of
+    Toronto Institute for Aerospace Studies} \\
+  {\normalsize\itshape 4925
+    Dufferin Street, Toronto, Ontario, M3H 5T6, Canada} \\
+  \vspace*{2cm}
+  {Research Assessment Committee Report} \\
+  \vspace*{1.5cm}
+  {December 1, 2026}
+\vspace*{0.3cm}
+\begin{figure}[b]
+\begin{center}
+      \includegraphics[width=0.60\textwidth]{./figs/utias-logo-new.jpg}
+\end{center}
+\end{figure}
+  \vfill\null
+\endgroup}
+
+\thispagestyle{empty}\titleRR
+\clearpage
+\setcounter{page}{1}
+
+%\maketitle
+%\tableofcontents
+%\newpage
+
+% #########################################################
+% INTRODUCTION
+% #########################################################
+\section{Introduction}\label{intro}
+
+Moment methods (allow for non-LTE behavior)
+
+Write about plasma phenomena that we are interested in capturing
+
+Simulation applications (magnetosphere, etc\ldots)
+
+
+% INTRODUCTION / Background
+% #########################################################
+\subsection{Background}\label{intro:background}
+
+Background about the modeling of plasma, some challenges
+\begin{itemize}
+  \item MHD as default continuum model for plasmas
+  \item shortcomings of MHD as a method of modeling plasmas
+\end{itemize}
+
+
+% INTRODUCTION / Plasma Modeling Beyond MHD
+% #########################################################
+\subsection{Plasma Modeling Beyond MHD}\label{intro:modeling}
+
+Write about alternative plasma models
+\begin{itemize}
+  \item introduce vlasov's equation
+  \item talk abotu PIC approaches
+  \item introduce moment closures as a concept, and just link to the full moment section
+  \item introduce the closure problem as a general problem in both MHD and Moment approaches
+\end{itemize}
+
+
+
+% #########################################################
+% SCOPE OF RESEARCH PROJECT
+% #########################################################
+\section{Scope of Research}\label{scope}
+
+Implement adjoint based DA for parameter estimation
+\begin{itemize}
+  \item this will be done for a 10 moment multifluid model
+  \item the goal is to utilize direct kinetic simulation as the measurements for the DA algorithm
+  \item the question can then become: how sparse can the data be while still allowing us to properly tune the parameters, could sat measurements or some real life measurements be dense enough to inform parameters in real time?
+  \item is there some set of parameters of a given form that are applicable across a wide variety of cases and problems?
+\end{itemize}
+
+
+
+% #########################################################
+% PLASMA PHYSICS THEORY
+% #########################################################
+\section{Plasma Physics Theory}\label{plasma}
+
+Talk about background to do with plasma modeling
+\begin{itemize}
+  \item what do we do to model a plasma: need E and B fields coupled to the transport model
+  \item different types of effects that need to be resolved
+\end{itemize}
+
+
+% PLASMA PHYSICS THEORY / Plasma Phenomena to be Modeled
+% #########################################################
+\subsection{Plasma Phenomena to be Modeled}\label{plasma:phenomena}
+
+table of what phenomena are important, and what is important to resolve them
+
+
+% PLASMA PHYSICS THEORY / Moment Methods for Plasmas
+% #########################################################
+\subsection{Moment Methods for Plasmas}\label{plasma:moment_methods}
+
+write out the full set of moment transport equations for plasmas (5 and 10 moment)
+
+write out vlasov-maxwell or vlasov-fokker-planck equations for reference later on in the 10 moment model
+
+
+% The 10 Moment Model
+% ###################
+\subsubsection{The 10 Moment Model}
+
+lay out 10 moment model (which moments are taken, what is the assumed NDF, etc...)
+
+
+% The 5 moment Model
+% ##################
+\subsubsection{The 5 Moment Model}
+
+lay out 5 moment model (which moments are taken, how does it simplify from the 10 moment equation)
+
+
+% PLASMA PHYSICS THEORY / Coupling to E and B fields
+% #########################################################
+\subsection{Coupling of the Moment Equations to $\vec{E}$ and $\vec{B}$}\label{plasma:coupleing_to_E_and_B}
+
+Explain why it is important that the E and B fields are coupled to the moment equations, and how we plan to do it
+
+outline the quasi-neutral formulation, and mention the darwin approximation as an alternative
+
+little table showing what each is defficient in
+
+
+
+% #########################################################
+% DATA ASSIMILATION
+% #########################################################
+\section{Data Assimilation}\label{DA}
+
+Say what the purpose of DA is (utilizing data to inform your model within the confines of the model's physics)
+
+
+% DATA ASSIMILATION / Bayesian Inference
+% #########################################################
+\subsection{Bayesian Formulation of DA}\label{DA:bayesian}
+
+Introduce the general form of data assimilation in the bayesian formulation
+
+
+% DATA ASSIMILATION / Parameter Estimation
+% #########################################################
+\subsection{Parameter Estimation in a DA Framework}\label{DA:parameter_estimation}
+
+reformat the bayesian inverse problem as one of determing some set of model parameters, and give examples of how this can help adress the closure problem
+
+
+
+
+
+% APPLICATIONS OF DA FOR PARAMETER ESTIMATION
+% #########################################################
+\section{Applications of DA For Parameter Estimation}\label{applications}
+
+talk about the different ways that this could provide closure terms
+\begin{itemize}
+  \item closures for highest order moments
+  \item parametrization of the NDF
+\end{itemize}
+
+
+% FINITE VOLUME SOLUTION METHOD
+% #########################################################
+\section{Finite Volume Solution Method}\label{finite_volume}
+
+write up what type of solution method will be used
+\begin{itemize}
+  \item presumably godunov type finite volume solver
+  \item with AMR? Although I am not sure this is within the timeline of a MASc thesis if it is not able to be mostly implemented from existing pieces of the code
+  \item talk about advantages of it being a conservative scheme, and the hyperbolicity of the transport equations
+\end{itemize}
+
+
+
+% ESTIMATION OF CLOSURE PARAMETERS
+% #########################################################
+\section{Preliminary Work on Data Assimilation for the Estimation of Closure Parameters}\label{DA_project}
+
+Project with Burger's equation
+
+
+% ESTIMATION OF CLOSURE PARAMETERS / Forward Model
+% #########################################################
+\subsection{Forward Model}\label{DA_project:forward_model}
+
+extremely brief outline of forward model
+
+
+% ESTIMATION OF CLOSURE PARAMETERS / inverse_model
+% #########################################################
+\subsection{Inverse Model}\label{DA_project:inverse_model}
+
+
+\newpage
+
+\clearpage
+% ---------------------------------------
+% SUMMARY PROGRESS TO DATE AND FUTURE WORK
+% ---------------------------------------
+\section{Summary of Progress to Date and Future Work}
+\subsection{Progress to Date}
+
+\begin{tabular}{|l|c|} \hline
+\multicolumn{1}{|c|}{\bf{Task}} & \multicolumn{1}{|c|}{\bf{Date
+    Completed}} \\
+
+
+
+
+\hline
+\end{tabular}
+
+\subsection{Future Work}
+
+\begin{tabular}{|l|c|} \hline
+\multicolumn{1}{|c|}{\bf{Task}} & \multicolumn{1}{|c|}{\bf{
+    Date of Completion}} \\
+
+\hline
+\end{tabular}
+
+\newpage
+\bibliographystyle{aiaa} 
+\bibliography{journals-full,Ref_RAC1.bib}
+\end{document}

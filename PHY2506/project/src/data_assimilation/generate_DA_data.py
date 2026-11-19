@@ -205,19 +205,30 @@ def make_steady_plot(df, df_ic, df_resid, df_noisy, BCs):
 
 # plot for transient data
 ############################################################
-def make_transient_plot(df, df_ic, df_resid, df_noisy, BCs):
+def make_transient_plot(df, df_ic, df_resid, df_noisy, BCs, only_plot_first_and_last_value=True):
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
 
     times = np.unique(df.t)
-    cmap = plt.cm.plasma
+
     norm = plt.Normalize(vmin=times.min(), vmax=times.max())
 
-    for t in times:
-        df_t = df[df.t == t]
-        df_tn = df_noisy[df_noisy.t == t]
-        ax1.plot(df_t.x, df_t.u, color=cmap(norm(t)))
-        ax1.scatter(df_tn.x, df_tn.u_noisy, color=cmap(norm(t)), marker='x', alpha=0.75)
+    if only_plot_first_and_last_value:
+        cmap = plt.cm.bwr
+        for t in times:
+            if t == times[0] or t == times[-1]:
+                df_t = df[df.t == t]
+                df_tn = df_noisy[df_noisy.t == t]
+                ax1.plot(df_t.x, df_t.u, color=cmap(norm(t)))
+                ax1.scatter(df_tn.x, df_tn.u_noisy, color=cmap(norm(t)), marker='x', alpha=0.75)
+
+    else:
+        cmap = plt.cm.plasma
+        for t in times:
+            df_t = df[df.t == t]
+            df_tn = df_noisy[df_noisy.t == t]
+            ax1.plot(df_t.x, df_t.u, color=cmap(norm(t)))
+            ax1.scatter(df_tn.x, df_tn.u_noisy, color=cmap(norm(t)), marker='x', alpha=0.75)
 
 
     ax1.set_xlabel(r"$x$")

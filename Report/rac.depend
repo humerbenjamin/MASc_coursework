@@ -1,0 +1,6 @@
+#dependancies generated automatically with texdepend
+#
+PACKAGES = article.cls graphicx.sty epsfig.sty color.sty subfigure.sty setspace.sty amsmath.sty amssymb.sty caption.sty
+#
+FIGS = ./figs/paper_absorb_m1_compare_bc.eps ./figs/paper_absorb_l10_m1_compare_bc.eps ./figs/amr.png ./figs/amr_radius.png
+#
