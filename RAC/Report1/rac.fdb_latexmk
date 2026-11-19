@@ -1,15 +1,15 @@
 # Fdb version 4
-["bibtex rac"] 1795049000.55847 "rac.aux" "rac.bbl" "rac" 1795049002.09279 0
-  "./Ref_RAC1.bib" 1793660738.79018 9743 2f8803a16d0b667e6da82561eb070b50 ""
-  "./aiaa.bst" 1793660738.83718 24964 bfa1085089b0bbab9d068ef0e0587d85 ""
-  "./journals-full.bib" 1793660738.86518 7675 ec0591ea47f0e01cfa009b75f789ed2e ""
-  "rac.aux" 1795049001.52034 3240 11886522bde5d7f46d908ba6af3ef055 "pdflatex"
+["bibtex rac"] 1795100478.08967 "rac.aux" "rac.bbl" "rac" 1795100479.61816 0
+  "./Ref_RAC1.bib" 1795049044.80775 9743 2f8803a16d0b667e6da82561eb070b50 ""
+  "./aiaa.bst" 1795049044.86775 24964 bfa1085089b0bbab9d068ef0e0587d85 ""
+  "./journals-full.bib" 1795049044.88875 7675 ec0591ea47f0e01cfa009b75f789ed2e ""
+  "rac.aux" 1795100479.06548 3566 9de92479afa22b928a427aed6dfc6342 "pdflatex"
   (generated)
   "rac.bbl"
   "rac.blg"
   (rewritten before read)
-["pdflatex"] 1795049000.71901 "/nfs/kris/d1/home/groth/humerben/Documents/MASc_work/MASc_research/RAC/RAC1/Report/rac.tex" "rac.pdf" "rac" 1795049002.09374 0
-  "/nfs/kris/d1/home/groth/humerben/Documents/MASc_work/MASc_research/RAC/RAC1/Report/rac.tex" 1795048998.88431 9514 63a2410df81c64c08a42b782a6595878 ""
+["pdflatex"] 1795100478.24657 "/nfs/kris/d1/home/groth/humerben/Documents/MASc_work/MASc_coursework/RAC/Report1/rac.tex" "rac.pdf" "rac" 1795100479.61907 0
+  "/nfs/kris/d1/home/groth/humerben/Documents/MASc_work/MASc_coursework/RAC/Report1/rac.tex" 1795100476.44345 10060 2d9328268ada0ff1f891a04496ff97a4 ""
   "/nfs/kris/d1/local_net2/texlive/2022/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1652871122.15436 2900 1537cc8184ad1792082cd229ecc269f4 ""
   "/nfs/kris/d1/local_net2/texlive/2022/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/nfs/kris/d1/local_net2/texlive/2022/texmf-dist/fonts/tfm/jknappen/ec/tcrm1200.tfm" 1652870927.03036 1536 74b7293ec3713bb7fdca8dd1bd1f469c ""
@@ -72,10 +72,10 @@
   "/nfs/kris/d1/local_net2/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1720556764 5483450 05ab5ba183420bcfbeb5d5903c433276 ""
   "/nfs/kris/d1/local_net2/texlive/2022/texmf-var/web2c/pdftex/pdflatex.fmt" 1720557905 8239431 c455b4f028841d5b0c88c820309c1bac ""
   "/nfs/kris/d1/local_net2/texlive/2022/texmf.cnf" 1652870433.57936 455 5b996dcaa0eb4ef14a83b026bc0a008c ""
-  "figs/utias-logo-new.jpg" 1793660738.22617 67933 5ba70d93d779c1d2727b3214d4278e84 ""
-  "rac.aux" 1795049001.52034 3240 11886522bde5d7f46d908ba6af3ef055 "pdflatex"
-  "rac.bbl" 1795049000.71533 82 279e1be0f89e97053c2d51ae1a839f84 "bibtex rac"
-  "rac.tex" 1795048998.88431 9514 63a2410df81c64c08a42b782a6595878 ""
+  "figs/utias-logo-new.jpg" 1795049043.92974 67933 5ba70d93d779c1d2727b3214d4278e84 ""
+  "rac.aux" 1795100479.06548 3566 9de92479afa22b928a427aed6dfc6342 "pdflatex"
+  "rac.bbl" 1795100478.23447 82 279e1be0f89e97053c2d51ae1a839f84 "bibtex rac"
+  "rac.tex" 1795100476.44345 10060 2d9328268ada0ff1f891a04496ff97a4 ""
   (generated)
   "rac.aux"
   "rac.log"

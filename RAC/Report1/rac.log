@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.7.9)  18 NOV 2026 19:43
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.7.9)  19 NOV 2026 10:01
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**/nfs/kris/d1/home/groth/humerben/Documents/MASc_work/MASc_research/RAC/RAC1/Report/rac.tex
-(/nfs/kris/d1/home/groth/humerben/Documents/MASc_work/MASc_research/RAC/RAC1/Report/rac.tex
+**/nfs/kris/d1/home/groth/humerben/Documents/MASc_work/MASc_coursework/RAC/Report1/rac.tex
+(/nfs/kris/d1/home/groth/humerben/Documents/MASc_work/MASc_coursework/RAC/Report1/rac.tex
 LaTeX2e <2024-06-01> patch level 2
 L3 programming layer <2024-05-27>
 (/nfs/kris/d1/local_net2/texlive/2022/texmf-dist/tex/latex/base/article.cls
@@ -231,7 +231,9 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 
 [3]
 
-[4
+[4]
+
+[5
 
 ] (./rac.bbl
 
@@ -239,25 +241,25 @@ LaTeX Warning: Empty `thebibliography' environment on input line 4.
 
 )
 
-[5] (./rac.aux)
+[6] (./rac.aux)
  ***********
 LaTeX2e <2024-06-01> patch level 2
 L3 programming layer <2024-05-27>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 4256 strings out of 473584
- 70056 string characters out of 5721790
+ 4258 strings out of 473584
+ 70096 string characters out of 5721790
  1932905 words of memory out of 5000000
- 27117 multiletter control sequences out of 15000+600000
+ 27119 multiletter control sequences out of 15000+600000
  567516 words of font info for 72 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 57i,7n,65p,338b,326s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 57i,7n,65p,336b,326s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </nfs/kris/d1/local_net2/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></nfs/kris/d1/local_net2/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></nfs/kris/d1/local_net2/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></nfs/kris/d1/local_net2/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></nfs/kris/d1/local_net2/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></nfs/kris/d1/local_net2/texlive/2022/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb>
-Output written on rac.pdf (6 pages, 144916 bytes).
+Output written on rac.pdf (7 pages, 145312 bytes).
 PDF statistics:
- 57 PDF objects out of 1000 (max. 8388607)
- 34 compressed objects within 1 object stream
+ 62 PDF objects out of 1000 (max. 8388607)
+ 38 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  6 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -1,8 +1,8 @@
-PWD /nfs/kris/d1/home/groth/humerben/Documents/MASc_work/MASc_research/RAC/RAC1/Report
+PWD /nfs/kris/d1/home/groth/humerben/Documents/MASc_work/MASc_coursework/RAC/Report1
 INPUT /nfs/kris/d1/local_net2/texlive/2022/texmf.cnf
 INPUT /nfs/kris/d1/local_net2/texlive/2022/texmf-dist/web2c/texmf.cnf
 INPUT /nfs/kris/d1/local_net2/texlive/2022/texmf-var/web2c/pdftex/pdflatex.fmt
-INPUT /nfs/kris/d1/home/groth/humerben/Documents/MASc_work/MASc_research/RAC/RAC1/Report/rac.tex
+INPUT /nfs/kris/d1/home/groth/humerben/Documents/MASc_work/MASc_coursework/RAC/Report1/rac.tex
 OUTPUT rac.log
 INPUT /nfs/kris/d1/local_net2/texlive/2022/texmf-dist/tex/latex/base/article.cls
 INPUT /nfs/kris/d1/local_net2/texlive/2022/texmf-dist/tex/latex/base/article.cls
