@@ -1,0 +1,180 @@
+\documentclass[11pt,landscape]{article}
+
+\usepackage[margin=0.75in]{geometry}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{array}
+
+\title{AER1319 Assignment 2: Exact Riemann Solver}
+\author{Benjamin Humer}
+\date{November 26, 2026}
+
+\begin{document}
+
+\maketitle
+
+\section*{Benchmark Cases}
+
+The exact Riemann solver is benchmarked using the four initial-value configurations which were given in the example solver.
+
+\subsection*{Case 1: High-Pressure Left State}
+
+\subsubsection*{Input Parameters}
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Parameter & Symbol & Value \\
+\midrule
+Left density & $\rho_L$ & 4.00 \\
+Left velocity & $u_L$ & 0.00 \\
+Left pressure & $p_L$ & 1010000 \\
+Right density & $\rho_R$ & 1.00 \\
+Right velocity & $u_R$ & 0.00 \\
+Right pressure & $p_R$ & 101000 \\
+Ratio of specific heats & $\gamma$ & 1.40 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsubsection*{Solver Outputs}
+
+\begin{center}
+\small
+\begin{tabular}{lccccccccccc}
+\toprule
+Solver & Pattern & $\rho_{SL}$ & $\rho_{SR}$ & $u_S$ & $p_S$
+& $u_{\mathrm{shk},L}$ & $u_{H,L}$ & $u_{T,L}$
+& $u_{\mathrm{shk},R}$ & $u_{H,R}$ & $u_{T,R}$ \\
+\midrule
+Prof. Groth & 3 & 1.95707 & 2.38277 & 396.033 & 371268
+& 0 & -594.559 & -119.32 & 682.438 & 0 & 0 \\
+
+Ben & 3 & 1.95707 & 2.38277 & 396.033 & 371268
+& 0 & -594.559 & -119.32 & 682.438 & 0 & 0 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{Case 2: High-Pressure Right State}
+
+\subsubsection*{Input Parameters}
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Parameter & Symbol & Value \\
+\midrule
+Left density & $\rho_L$ & 1.00 \\
+Left velocity & $u_L$ & 0.00 \\
+Left pressure & $p_L$ & 101000 \\
+Right density & $\rho_R$ & 4.00 \\
+Right velocity & $u_R$ & 0.00 \\
+Right pressure & $p_R$ & 1010000 \\
+Ratio of specific heats & $\gamma$ & 1.40 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsubsection*{Solver Outputs}
+
+\begin{center}
+\small
+\begin{tabular}{lccccccccccc}
+\toprule
+Solver & Pattern & $\rho_{SL}$ & $\rho_{SR}$ & $u_S$ & $p_S$
+& $u_{\mathrm{shk},L}$ & $u_{H,L}$ & $u_{T,L}$
+& $u_{\mathrm{shk},R}$ & $u_{H,R}$ & $u_{T,R}$ \\
+\midrule
+Prof. Groth & 2 & 2.38277 & 1.95707 & -396.033 & 371268
+& -682.438 & 0 & 0 & 0 & 594.559 & 119.32 \\
+
+Ben & 2 & 2.38277 & 1.95707 & -396.033 & 371268
+& -682.438 & 0 & 0 & 0 & 594.559 & 119.32 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{Case 3: Moving Initial States}
+
+\subsubsection*{Input Parameters}
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Parameter & Symbol & Value \\
+\midrule
+Left density & $\rho_L$ & 5.00 \\
+Left velocity & $u_L$ & -78.00 \\
+Left pressure & $p_L$ & 656500 \\
+Right density & $\rho_R$ & 1.60 \\
+Right velocity & $u_R$ & 120.00 \\
+Right pressure & $p_R$ & 202000 \\
+Ratio of specific heats & $\gamma$ & 1.40 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsubsection*{Solver Outputs}
+
+\begin{center}
+\small
+\begin{tabular}{lccccccccccc}
+\toprule
+Solver & Pattern & $\rho_{SL}$ & $\rho_{SR}$ & $u_S$ & $p_S$
+& $u_{\mathrm{shk},L}$ & $u_{H,L}$ & $u_{T,L}$
+& $u_{\mathrm{shk},R}$ & $u_{H,R}$ & $u_{T,R}$ \\
+\midrule
+Prof. Groth & 3 & 2.54993 & 1.89297 & 192.106 & 255751
+& 0 & -506.742 & -182.615 & 585.9 & 0 & 0 \\
+
+Ben & 3 & 2.54993 & 1.89297 & 192.106 & 255751
+& 0 & -506.742 & -182.615 & 585.9 & 0 & 0 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{Case 4: Reversed Moving Initial States}
+
+\subsubsection*{Input Parameters}
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Parameter & Symbol & Value \\
+\midrule
+Left density & $\rho_L$ & 1.60 \\
+Left velocity & $u_L$ & -120.00 \\
+Left pressure & $p_L$ & 202000 \\
+Right density & $\rho_R$ & 5.00 \\
+Right velocity & $u_R$ & 78.00 \\
+Right pressure & $p_R$ & 656500 \\
+Ratio of specific heats & $\gamma$ & 1.40 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsubsection*{Solver Outputs}
+
+\begin{center}
+\small
+\begin{tabular}{lccccccccccc}
+\toprule
+Solver & Pattern & $\rho_{SL}$ & $\rho_{SR}$ & $u_S$ & $p_S$
+& $u_{\mathrm{shk},L}$ & $u_{H,L}$ & $u_{T,L}$
+& $u_{\mathrm{shk},R}$ & $u_{H,R}$ & $u_{T,R}$ \\
+\midrule
+Prof. Groth & 2 & 1.89297 & 2.54993 & -192.106 & 255751
+& -585.9 & 0 & 0 & 0 & 506.742 & 182.615 \\
+
+Ben & 2 & 1.89297 & 2.54993 & -192.106 & 255751
+& -585.9 & 0 & 0 & 0 & 506.742 & 182.615 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section*{Benchmark Summary}
+
+All four benchmark cases exhibit agreement between the reference solver and the implemented solver. The implemented solver is available as a submission on Quercus.
+
+\end{document}

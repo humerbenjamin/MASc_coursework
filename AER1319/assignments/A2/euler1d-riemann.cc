@@ -223,9 +223,12 @@ int main(int num_arg, char *arg_ptr[]) {
   pR = 6.50*101.00*1000.00;
   gamma = 1.40;
 
-  Riemann(rhoL, uL, pL,
+  Riemann(
+    rhoL, uL, pL,
 	  rhoR, uR, pR,
-	  gamma, pattern,
+	  gamma,
+    
+    pattern,
 	  rhoML, rhoMR, uM, pM,
 	  vsL, vhL, vtL,
 	  vsR, vhR, vtR);

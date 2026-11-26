@@ -9,26 +9,27 @@
 using namespace std;
 
 void exact_riemann(
-                // input parameters
+                    // input parameters
                 const double &rhoL, const double &uL, const double &pL,             // left solution state
                 const double &rhoR, const double &uR, const double &pR,             // right solution state
                 const double &gamma,                                                // constant values parametrizing the solution
-                int &pattern,
                 int &num_iter, int &max_iter, const double & conv_tol,              // variables for iterative solver
-                double &rhoML, double &rhoMR, double &uM, double &pM,
-                double &vsL, double &vhL, double &vtL,
-                double &vsR, double &vhR, double &vtR
+                    // output parameters
+                int &pattern,                                                       // type of wave configuration
+                double &rhoSL, double &rhoSR, double &uS, double &pS,               // densities and velocities
+                double &ushkL, double &uHL, double &uTL,                            // left wave properties
+                double &ushkR, double &uHR, double &uTR                             // right wave properties
 ) {
 
-    // set up variables to describe the 
 
-    // set up variables for iterative solver
-    double convergence_tolerance=1e-5;
+
 
     // set up intermediate variables
     double MSL, MSR;                    // shock mach numbers
-    double pSL, pSR;
-    double dpSL_duS, dpSR_duS;
+    double pSL, pSR;                    // pressures
+    double dpSL_duS, dpSR_duS;          // pressure derivatives
+    double aSL, aSR;                    // wave speeds
+    double uSL, uSR;                    // u solutions for the left and right states
 
 
     // calculate sound speeds for the left and right states
@@ -43,34 +44,34 @@ void exact_riemann(
 
     // get an estimate of the intermediate velocity
     double Z = aR/aL * pow((rhoL/rhoR), (gamma - 1) / (2 * gamma));         // parameter for the initial estimate for newton's method
-    double uS = (PL*Z + QR) / (1 + Z);                                     // initial estimate for u for newton's method
+    uS = (PL*Z + QR) / (1 + Z);                                     // initial estimate for u for newton's method
 
     // check to see if iteration is required, or if we are in the RCR pattern, which has an exacct solution
     if (uL <= uS && uS <= uR){
         // get intermediate pressure p*
-        double pS = pL * pow(((gamma-1) / 2 * (PL-QR) / (aL*(1+Z))), (2*gamma)/(gamma-1));
+        pS = pL * pow(((gamma-1) / 2 * (PL-QR) / (aL*(1+Z))), (2*gamma)/(gamma-1));
         
         // get intermediate sound speeds aL* and aR*
-        double aSL = aL * pow((pS / pL), (gamma-1)/(2*gamma));
-        double aSR = aR * pow((pS / pR), (gamma-1)/(2*gamma));
+        aSL = aL * pow((pS / pL), (gamma-1)/(2*gamma));
+        aSR = aR * pow((pS / pR), (gamma-1)/(2*gamma));
 
         // get intermediate densities rhoL* and rhoR*
-        double rhoSL = (gamma * pS) / (pow(aSL, 2));
-        double rhoSR = (gamma * pS) / (pow(aSR, 2));
+        rhoSL = (gamma * pS) / (pow(aSL, 2));
+        rhoSR = (gamma * pS) / (pow(aSR, 2));
 
         // set variable for the wave pattern (RCR=1)
-        int pattern=1;
+        pattern=1;
 
         // set variables for wave speeds associated with this pattern
             // left rarefaction wave
-        double uHL = uL - aL;           // head
-        double uTL = uS - aSL;         // tail
+        uHL = uL - aL;           // head
+        uTL = uS - aSL;         // tail
             // right rarefaction wave
-        double uHR = uR + aL;           // head
-        double uTR = uS + aSR;         // tail
+        uHR = uR + aL;           // head
+        uTR = uS + aSR;         // tail
             // shock waves
-        double ushkL = 0.0;               // left shock
-        double ushkR = 0.0;               // right shock
+        ushkL = 0.0;               // left shock
+        ushkR = 0.0;               // right shock
 
     }
     
@@ -127,13 +128,13 @@ void exact_riemann(
 
 
     // pressure should be equal after iteration, so take the average
-    double pS = 0.5 * (pSR + pSL);
+    pS = 0.5 * (pSR + pSL);
 
     // calculate head, tail, and shock velocities where applicable
         // begin with left moving wave
     if (uL >= uS){      // shock
             // density
-        aSL = aL*sqrt(((gamma+1.00) + (gamma-1.00)*pS/pL) / ((gamma+1.00) + (gamma-1.00)*pL/pS) );
+        aSL = aL*sqrt(((gamma+1.00) + (gamma-1.00)*pS/pL) / ((gamma+1.00) + (gamma-1.00)*pL/pS));
         rhoSL = (gamma * pS) / pow(aSL, 2);
             // shock speed
         ushkL = uL + MSL * aL;
@@ -147,17 +148,76 @@ void exact_riemann(
             // shock speed
         ushkL = 0.0;
             // rarefaction head and tail speeds
-
+        uHL = uL - aL;
+        uTL = uS - aSL;
     }
 
-    
+        // now do the same for the right moving wave
+    if (uS >= uR){      // shock
+            // density
+        aSR = aR*sqrt(((gamma+1.00) + (gamma-1.00)*pS/pR) / ((gamma+1.00) + (gamma-1.00)*pR/pS));
+        rhoSR = gamma * pS / pow(aSR, 2);
+            // shock speed
+        ushkR = uR + MSR * aR;
+            // rarefaction  head and tail speeds
+        uHR = 0.0;
+        uTR = 0.0;
+    }
+    else{               // rarefaction
+            // density
+        rhoSR = (gamma * pS) / pow(aSR, 2);
+            // shock speed
+        ushkR = 0.0;
+            // rarefaction head and tail speeds
+        uHR = uR + aR;
+        uTR = uS + aSR;
+    }
 
+    // finally, determine the pattern type
+        // RCR
+    if (uL <= uS && uS <= uR){
+        pattern = 1;
+    }
+        // SCR
+    else if (uL > uS && uS <= uR){
+        pattern = 2;
+    }
+        // RCS 
+    else if (uL <= uS && uS > uR){
+        pattern = 3;
+    }
+        // SCS
+    else{
+        pattern = 4;
+    }
+
+    // solve complete
 }
 
 
 
 
 int main(void){
+    // set up input variables
+    double rhoL, uL, pL;                    // left solution state
+    double rhoR, uR, pR;                    // right solution state
+    double gamma;                           // constant values parametrizing the solution
+
+    // set up output variables
+    int pattern;                            // type of wave configuration
+    double rhoSL, rhoSR, uS, pS;            // densities and velocities
+    double ushkL, uHL, uTL;                 // left wave properties
+    double ushkR, uHR, uTR;                 // right wave properties
+
+    // set up newton solver variables
+    int num_iter = 0;
+    int max_iter = 10;
+    double conv_tol = 0.0000001;
+
+
+    // test cases are taken from solver example written by Prof. CPT Groth
+    // *******************************************************************
+
     // rhoL = 4.00*1.00;
     // uL = 0.00;
     // pL = 10.00*101.00*1000.00;
@@ -195,4 +255,34 @@ int main(void){
     gamma = 1.40;
 
 
+    exact_riemann(
+                            // input parameters
+                        rhoL, uL, pL,                                           // left solution state
+                        rhoR, uR, pR,                                           // right solution state
+                        gamma,                                                  // constant values parametrizing the solution
+                        num_iter, max_iter,  conv_tol,                          // variables for iterative solver
+                            // output parameters
+                        pattern,                                                // type of wave configuration
+                        rhoSL, rhoSR, uS, pS,                                   // densities and velocities
+                        ushkL, uHL, uTL,                                        // left wave properties
+                        ushkR, uHR, uTR                                         // right wave properties
+                 );
+
+
+
+    // output printing is taken from solver example written by Prof. CPT Groth
+    // ***********************************************************************
+    cout << "\n " << pattern << "\n "
+         << rhoSL << " "
+         << rhoSR << " "
+         << uS << " "
+         << pS << "\n ";
+    cout << ushkL << " "
+         << uHL << " "
+         << uTL << "\n ";
+    cout << ushkR << " "
+         << uHR << " "
+         << uTR << "\n ";
+
+    return (0);
 }
